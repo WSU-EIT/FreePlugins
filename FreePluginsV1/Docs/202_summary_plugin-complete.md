@@ -118,6 +118,13 @@ The plugin auto-loads from the Plugins folder.
 
 ## Build Verification
 
+**Command:**
+```bash
+cd FreePluginsV1
+dotnet build FreePlugins/FreePlugins.csproj
+```
+
+**Result:**
 ```
 ✅ FreePluginsV1 builds successfully
    FreePlugins.Plugins net10.0 succeeded
@@ -126,6 +133,10 @@ The plugin auto-loads from the Plugins folder.
    FreePlugins.DataAccess net10.0 succeeded
    FreePlugins.Client net10.0 succeeded
    FreePlugins net10.0 succeeded
+   
+   Build succeeded.
+   0 Warning(s)
+   0 Error(s)
 ```
 
 ---

@@ -215,16 +215,16 @@ Can a reader follow the story?
 
 ## Consolidated Quick Wins
 
-| Doc | Improvement | Effort | Priority |
-|-----|-------------|--------|----------|
-| 200 | Add TL;DR after header | 5 min | P1 |
-| 201 | Add "Log File Location" callout | 10 min | P1 |
-| 201 | Update Actual Outcome / Resolution | 2 min | P1 |
-| 202 | Add build command | 5 min | P2 |
-| 203 | Add TL;DR after header | 5 min | P1 |
-| All | Add forward links between docs | 15 min | P2 |
+| Doc | Improvement | Effort | Priority | Status |
+|-----|-------------|--------|----------|--------|
+| 200 | Add TL;DR after header | 5 min | P1 | ✅ Done |
+| 201 | Add "Log File Location" callout | 10 min | P1 | ✅ Done |
+| 201 | Update Actual Outcome / Resolution | 2 min | P1 | ✅ Done |
+| 202 | Add build command | 5 min | P2 | ✅ Done |
+| 203 | Add TL;DR after header | 5 min | P1 | ✅ Done |
+| All | Add forward links between docs | 15 min | P2 | ⬜ Deferred |
 
-**Total Effort:** ~42 minutes
+**Total Effort:** ~42 minutes → **27 minutes applied**
 
 ---
 
@@ -253,11 +253,11 @@ Can a reader follow the story?
 
 | Action | Owner | Priority | Status |
 |--------|-------|----------|--------|
-| Add TL;DR to 200, 203 | [Quality] | P1 | ⬜ TODO |
-| Add log file location callout to 201 | [Quality] | P1 | ⬜ TODO |
-| Update 201 header (Outcome/Resolution) | [Quality] | P1 | ⬜ TODO |
-| Add build command to 202 | [Quality] | P2 | ⬜ TODO |
-| Add forward links between docs | [Quality] | P2 | ⬜ TODO |
+| Add TL;DR to 200, 203 | [Quality] | P1 | ✅ Done |
+| Add log file location callout to 201 | [Quality] | P1 | ✅ Done |
+| Update 201 header (Outcome/Resolution) | [Quality] | P1 | ✅ Done |
+| Add build command to 202 | [Quality] | P2 | ✅ Done |
+| Add forward links between docs | [Quality] | P2 | ⬜ Deferred |
 
 ---
 
