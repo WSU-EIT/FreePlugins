@@ -1,4 +1,12 @@
 <Solution>
+  <Folder Name="/FreeCICD/">
+    <Project Path="../FreeCICD-main/FreeCICD.Client/FreeCICD.Client.csproj" />
+    <Project Path="../FreeCICD-main/FreeCICD.DataAccess/FreeCICD.DataAccess.csproj" />
+    <Project Path="../FreeCICD-main/FreeCICD.DataObjects/FreeCICD.DataObjects.csproj" />
+    <Project Path="../FreeCICD-main/FreeCICD.EFModels/FreeCICD.EFModels.csproj" />
+    <Project Path="../FreeCICD-main/FreeCICD.Plugins/FreeCICD.Plugins.csproj" />
+    <Project Path="../FreeCICD-main/FreeCICD/FreeCICD.csproj" />
+  </Folder>
   <Folder Name="/FreeCRM-FreePlugins_base/">
     <Project Path="../FreeCRM-FreePlugins_base/FreePlugins.Client/FreePlugins.Client.csproj" />
     <Project Path="../FreeCRM-FreePlugins_base/FreePlugins.DataAccess/FreePlugins.DataAccess.csproj" />
@@ -15,6 +23,19 @@
     <Project Path="../FreeCRM-main/CRM.Plugins/CRM.Plugins.csproj" />
     <Project Path="../FreeCRM-main/CRM/CRM.csproj" />
   </Folder>
+  <Folder Name="/FreeGLBA/">
+    <Project Path="../FreeGLBA-main/FreeGLBA.Client/FreeGLBA.Client.csproj" />
+    <Project Path="../FreeGLBA-main/FreeGLBA.DataAccess/FreeGLBA.DataAccess.csproj" />
+    <Project Path="../FreeGLBA-main/FreeGLBA.DataObjects/FreeGLBA.DataObjects.csproj" />
+    <Project Path="../FreeGLBA-main/FreeGLBA.EFModels/FreeGLBA.EFModels.csproj" />
+    <Project Path="../FreeGLBA-main/FreeGLBA.NugetClient/FreeGLBA.NugetClient.csproj" />
+    <Project Path="../FreeGLBA-main/FreeGLBA.NugetClientPublisher/FreeGLBA.NugetClientPublisher.csproj" />
+    <Project Path="../FreeGLBA-main/FreeGLBA.Plugins/FreeGLBA.Plugins.csproj" />
+    <Project Path="../FreeGLBA-main/FreeGLBA.TestClient/FreeGLBA.TestClient.csproj" />
+    <Project Path="../FreeGLBA-main/FreeGLBA.TestClientWithNugetPackage/FreeGLBA.TestClientWithNugetPackage.csproj" />
+    <Project Path="../FreeGLBA-main/FreeGLBA/FreeGLBA.csproj" />
+  </Folder>
+  <Folder Name="/FreeManager/" />
   <Folder Name="/FreePluginsV1/">
     <Project Path="../FreePluginsV1/Docs/Docs.csproj" />
     <Project Path="../FreePluginsV1/FreePlugins.Client/FreePlugins.Client.csproj" />
