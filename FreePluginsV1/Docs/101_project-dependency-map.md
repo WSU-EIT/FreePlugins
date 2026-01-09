@@ -1,9 +1,9 @@
 ﻿# Project Dependency Map
 
-> **Purpose:** Complete dependency mapping for all 51 projects across 7 project suites  
-> **Version:** 1.0  
+> **Purpose:** Complete dependency mapping for all 54 projects across 7 project suites  
+> **Version:** 1.1  
 > **Last Updated:** 2025-01-XX  
-> **Total Projects:** 51
+> **Total Projects:** 54
 
 ---
 
@@ -15,6 +15,8 @@
 4. [Suite-by-Suite Breakdown](#suite-by-suite-breakdown)
 5. [Dependency Depth Analysis](#dependency-depth-analysis)
 6. [Package Version Comparison](#package-version-comparison)
+7. [Plugin System Architecture](#plugin-system-architecture)
+8. [FreePluginsV1 Goals](#freepluginsv1-goals)
 
 ---
 
@@ -30,7 +32,7 @@
 | 6 | **FreeManager** | `FreeManager-main/` | 6 | Management tool (oldest) | ✅ Active |
 | 7 | **FreeTools** | `FreeTools/` | 10 | Orchestration/testing suite | ✅ Active |
 
-**Total: 51 projects**
+**Total: 54 projects**
 
 ---
 
@@ -152,7 +154,7 @@ flowchart TB
 
 ## Complete Project Table
 
-### All 51 Projects with Dependencies
+### All 54 Projects with Dependencies
 
 | # | Suite | Project | SDK | Direct Dependencies | Transitive Dependencies |
 |---|-------|---------|-----|---------------------|------------------------|
@@ -557,7 +559,7 @@ flowchart TB
 ┌─────────────────────────────────────────────────────────────┐
 │                    PROJECT STATISTICS                       │
 ├─────────────────────────────────────────────────────────────┤
-│  Total Projects:              51                            │
+│  Total Projects:              54                            │
 │  Total Suites:                 7                            │
 │                                                             │
 │  Project Types:                                             │
@@ -572,13 +574,205 @@ flowchart TB
 │    • FreeManager: CLI tool (System.CommandLine)            │
 │    • FreeCICD: Azure DevOps integration packages           │
 │    • FreeTools: .NET Aspire orchestration                  │
+│                                                             │
+│  Plugin System:                                             │
+│    • Plugin Types:             4 interfaces                 │
+│    • Built-in Examples:        6 per suite                  │
+│    • Active Usage:             Auth plugins only            │
+│    • Development Focus:        Lifecycle logging plugin     │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 📬 About
+## Plugin System Architecture
 
-**FreePlugins** is developed and maintained by **[Enrollment Information Technology (EIT)](https://em.wsu.edu/eit/meet-our-staff/)** at **Washington State University**.
+The FreeCRM framework includes a powerful **dynamic plugin system** that allows runtime extensibility without recompilation. This system is shared across all derived project suites.
 
-📧 Questions or feedback? Visit our [team page](https://em.wsu.edu/eit/meet-our-staff/) or open an issue on [GitHub](https://github.com/WSU-EIT/FreePlugins/issues)
+### Plugin Engine Overview
+
+```mermaid
+flowchart TB
+    subgraph Startup["🚀 Application Startup"]
+        Program["Program.cs"]
+        PluginLoader["Plugin Loader"]
+        DI["DI Container"]
+    end
+    
+    subgraph PluginFiles["📁 Plugins Folder"]
+        CS[".cs files<br/>(compile-time safe)"]
+        Plugin[".plugin files<br/>(external code)"]
+        Assemblies[".assemblies files<br/>(DLL references)"]
+    end
+    
+    subgraph Runtime["⚡ Runtime Execution"]
+        Roslyn["Roslyn Compiler"]
+        Execute["Execute Method"]
+    end
+    
+    subgraph Interfaces["🔌 Plugin Interfaces"]
+        IPlugin["IPlugin<br/>(General)"]
+        IPluginAuth["IPluginAuth<br/>(Login/Logout)"]
+        IPluginBG["IPluginBackgroundProcess<br/>(Scheduled Tasks)"]
+        IPluginUser["IPluginUserUpdate<br/>(User CRUD Hooks)"]
+    end
+    
+    Program --> PluginLoader
+    PluginLoader --> CS
+    PluginLoader --> Plugin
+    Plugin --> Assemblies
+    PluginLoader --> DI
+    DI --> Runtime
+    CS --> Roslyn
+    Plugin --> Roslyn
+    Roslyn --> Execute
+    
+    Execute --> IPlugin
+    Execute --> IPluginAuth
+    Execute --> IPluginBG
+    Execute --> IPluginUser
+```
+
+### Plugin Interfaces
+
+All plugins must implement `IPluginBase` which requires a `Properties()` method. Specialized interfaces add specific capabilities:
+
+| Interface | Purpose | Key Methods |
+|-----------|---------|-------------|
+| `IPluginBase` | Base interface | `Properties()` - Returns plugin metadata |
+| `IPlugin` | General purpose | `Execute(DataAccess, Plugin, User?)` |
+| `IPluginAuth` | Authentication | `Login(...)`, `Logout(...)` |
+| `IPluginBackgroundProcess` | Background tasks | `Execute(DataAccess, Plugin, iteration)` |
+| `IPluginUserUpdate` | User CRUD hooks | `UpdateUser(DataAccess, Plugin, User?)` |
+
+### Plugin Properties Dictionary
+
+Every plugin returns metadata via the `Properties()` method:
+
+```csharp
+public Dictionary<string, object> Properties() =>
+    new Dictionary<string, object> {
+        { "Id", new Guid("00000000-0000-0000-0000-000000000000") },  // Unique ID
+        { "Author", "Developer Name" },
+        { "ContainsSensitiveData", false },
+        { "Description", "What this plugin does" },
+        { "Name", "Plugin Display Name" },
+        { "SortOrder", 0 },           // Execution order
+        { "Type", "Example" },        // Plugin category
+        { "Version", "1.0.0" },
+        // Auth plugins also include:
+        { "ButtonText", "Login Button Text" },
+        { "ButtonClass", "btn btn-primary" },
+        { "ButtonIcon", "<i class=\"fa-solid fa-sign-in\"></i>" },
+        { "LimitToTenants", new List<Guid> { ... } },
+        { "Prompts", new List<PluginPrompt> { ... } },
+    };
+```
+
+### Built-in Plugin Examples Per Suite
+
+| Suite | Plugin Files | Notes |
+|-------|-------------|-------|
+| **FreeCRM-main** | Example1.cs, Example2.cs, Example3.cs, ExampleBackgroundProcess.cs, LoginWithPrompts.cs, UserUpdate.cs | Full set with all types |
+| **FreePlugins_base** | Same as FreeCRM | Namespace changed to `FreePlugins` |
+| **FreePluginsV1** | Same as FreePlugins_base | Development target |
+| **FreeCICD** | Example1-3.cs, LoginWithPrompts.cs, UserUpdate.cs | Missing ExampleBackgroundProcess |
+| **FreeGLBA** | Full set | Latest patterns |
+| **FreeManager** | Full set | Oldest implementation |
+
+### Plugin File Types
+
+| Extension | Purpose | Compilation |
+|-----------|---------|-------------|
+| `.cs` | In-solution plugins | Compiled with project |
+| `.plugin` | External plugins | Compiled at runtime via Roslyn |
+| `.assemblies` | DLL references | Lists assemblies for `.plugin` files |
+
+### Current Plugin Usage Analysis
+
+| Plugin Type | Current Usage | Implemented In |
+|-------------|---------------|----------------|
+| **Auth** | Custom login flows | `LoginWithPrompts.cs` - Prompts for username/password |
+| **BackgroundProcess** | Scheduled tasks | `ExampleBackgroundProcess.cs` - Demo only |
+| **UserUpdate** | Post-save hooks | `UserUpdate.cs` - Demo only |
+| **General** | UI prompts demo | `Example1.cs` - Shows all prompt types |
+
+> ⚠️ **Note:** Currently, only the `Auth` plugin type is actively used in production. The other types are examples waiting to be implemented.
+
+---
+
+## FreePluginsV1 Goals
+
+**FreePluginsV1** is the development suite for demonstrating and documenting the FreeCRM plugin system. The primary goal is to create practical, production-ready plugin examples that can be dropped into any FreeCRM-based project.
+
+### 🎯 Phase 1: Application Lifecycle Logger Plugin
+
+The first plugin to be developed is a **simple lifecycle logger** that:
+
+1. **On Application Start** - Logs a timestamped entry when the app boots
+2. **On Application Shutdown** - Logs when the app cleanly stops (if possible)
+3. **Output Location** - Creates `PluginLogs.log` in the same directory as `appsettings.json`
+
+#### Plugin Specification
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  PLUGIN: ApplicationLifecycleLogger                         │
+├─────────────────────────────────────────────────────────────┤
+│  Type:        BackgroundProcess                             │
+│  File:        ApplicationLifecycleLogger.cs                 │
+│  Output:      PluginLogs.log (same level as appsettings)   │
+│  Format:      CSV or structured log                         │
+│                                                             │
+│  Log Events:                                                │
+│    • APP_START    - When application boots                  │
+│    • APP_STOP     - When application cleanly shuts down     │
+│    • HEARTBEAT    - Optional periodic alive check           │
+│                                                             │
+│  Log Fields:                                                │
+│    • Timestamp (UTC)                                        │
+│    • Event Type                                             │
+│    • Machine Name                                           │
+│    • Process ID                                             │
+│    • App Version (optional)                                 │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### Expected Log Output
+
+```csv
+Timestamp,Event,MachineName,ProcessId,Message
+2025-01-15T10:30:00Z,APP_START,WEBSERVER01,12345,"Application started successfully"
+2025-01-15T18:00:00Z,APP_STOP,WEBSERVER01,12345,"Application shutdown initiated"
+```
+
+#### Portability Goal
+
+Once built, this plugin should be **drop-in compatible** with:
+- ✅ FreeCRM-main
+- ✅ FreePlugins_base
+- ✅ FreeCICD
+- ✅ FreeGLBA
+- ✅ FreeManager
+
+Simply copy the `.cs` file to any suite's `Plugins/` folder and restart the application.
+
+### 🎯 Phase 2: Additional Plugin Examples (Future)
+
+| Plugin | Type | Purpose |
+|--------|------|---------|
+| **DatabaseHealthCheck** | BackgroundProcess | Periodic DB connectivity test |
+| **AuditLogger** | UserUpdate | Log all user CRUD operations |
+| **CustomAuthProvider** | Auth | Template for SSO integration |
+| **ReportGenerator** | General | PDF/CSV export framework |
+
+### Documentation Deliverables
+
+| Document | Content |
+|----------|---------|
+| `102_deep-dive_FreeCRM-main.md` | Base framework analysis |
+| `103_deep-dive_FreePlugins_base.md` | Template analysis |
+| `104_deep-dive_FreeGLBA.md` | Newest implementation |
+| `105_deep-dive_FreeCICD.md` | CI/CD implementation |
+| `106_deep-dive_FreePluginsV1.md` | Development suite + plugin tutorials |
+| `107_deep-dive_FreeManager.md` | Legacy patterns (Razor inspiration) |
