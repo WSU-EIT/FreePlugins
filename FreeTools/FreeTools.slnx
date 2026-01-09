@@ -1,0 +1,39 @@
+<Solution>
+  <Folder Name="/FreeCRM-FreePlugins_base/">
+    <Project Path="../FreeCRM-FreePlugins_base/FreePlugins.Client/FreePlugins.Client.csproj" />
+    <Project Path="../FreeCRM-FreePlugins_base/FreePlugins.DataAccess/FreePlugins.DataAccess.csproj" />
+    <Project Path="../FreeCRM-FreePlugins_base/FreePlugins.DataObjects/FreePlugins.DataObjects.csproj" />
+    <Project Path="../FreeCRM-FreePlugins_base/FreePlugins.EFModels/FreePlugins.EFModels.csproj" />
+    <Project Path="../FreeCRM-FreePlugins_base/FreePlugins.Plugins/FreePlugins.Plugins.csproj" />
+    <Project Path="../FreeCRM-FreePlugins_base/FreePlugins/FreePlugins.csproj" />
+  </Folder>
+  <Folder Name="/FreeCRM/">
+    <Project Path="../FreeCRM-main/CRM.Client/CRM.Client.csproj" />
+    <Project Path="../FreeCRM-main/CRM.DataAccess/CRM.DataAccess.csproj" />
+    <Project Path="../FreeCRM-main/CRM.DataObjects/CRM.DataObjects.csproj" />
+    <Project Path="../FreeCRM-main/CRM.EFModels/CRM.EFModels.csproj" />
+    <Project Path="../FreeCRM-main/CRM.Plugins/CRM.Plugins.csproj" />
+    <Project Path="../FreeCRM-main/CRM/CRM.csproj" />
+  </Folder>
+  <Folder Name="/FreePluginsV1/">
+    <Project Path="../FreePluginsV1/Docs/Docs.csproj" />
+    <Project Path="../FreePluginsV1/FreePlugins.Client/FreePlugins.Client.csproj" />
+    <Project Path="../FreePluginsV1/FreePlugins.DataAccess/FreePlugins.DataAccess.csproj" />
+    <Project Path="../FreePluginsV1/FreePlugins.DataObjects/FreePlugins.DataObjects.csproj" />
+    <Project Path="../FreePluginsV1/FreePlugins.EFModels/FreePlugins.EFModels.csproj" />
+    <Project Path="../FreePluginsV1/FreePlugins.Plugins/FreePlugins.Plugins.csproj" />
+    <Project Path="../FreePluginsV1/FreePlugins/FreePlugins.csproj" />
+  </Folder>
+  <Folder Name="/FreeTools/">
+    <Project Path="Docs/Docs.csproj" />
+    <Project Path="FreeTools.AppHost/FreeTools.AppHost.csproj" />
+    <Project Path="FreeTools.BrowserSnapshot/FreeTools.BrowserSnapshot.csproj" />
+    <Project Path="FreeTools.Core/FreeTools.Core.csproj" />
+    <Project Path="FreeTools.EndpointMapper/FreeTools.EndpointMapper.csproj" />
+    <Project Path="FreeTools.EndpointPoker/FreeTools.EndpointPoker.csproj" />
+    <Project Path="FreeTools.ForkCRM/FreeTools.ForkCRM.csproj" />
+    <Project Path="FreeTools.WorkspaceInventory/FreeTools.WorkspaceInventory.csproj" />
+    <Project Path="FreeTools.WorkspaceReporter/FreeTools.WorkspaceReporter.csproj" />
+  </Folder>
+  <Project Path="../BlazorApp1/BlazorApp1.csproj" />
+</Solution>
