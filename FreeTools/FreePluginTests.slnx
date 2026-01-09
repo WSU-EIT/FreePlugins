@@ -35,7 +35,14 @@
     <Project Path="../FreeGLBA-main/FreeGLBA.TestClientWithNugetPackage/FreeGLBA.TestClientWithNugetPackage.csproj" />
     <Project Path="../FreeGLBA-main/FreeGLBA/FreeGLBA.csproj" />
   </Folder>
-  <Folder Name="/FreeManager/" />
+  <Folder Name="/FreeManager/">
+    <Project Path="../FreeManager-main/FreeManager.Cli/FreeManager.Cli.csproj" />
+    <Project Path="../FreeManager-main/FreeManager.Client/FreeManager.Client.csproj" />
+    <Project Path="../FreeManager-main/FreeManager.DataAccess/FreeManager.DataAccess.csproj" />
+    <Project Path="../FreeManager-main/FreeManager.DataObjects/FreeManager.DataObjects.csproj" />
+    <Project Path="../FreeManager-main/FreeManager.Plugins/FreeManager.Plugins.csproj" />
+    <Project Path="../FreeManager-main/FreeManager/FreeManager.csproj" />
+  </Folder>
   <Folder Name="/FreePluginsV1/">
     <Project Path="../FreePluginsV1/Docs/Docs.csproj" />
     <Project Path="../FreePluginsV1/FreePlugins.Client/FreePlugins.Client.csproj" />
