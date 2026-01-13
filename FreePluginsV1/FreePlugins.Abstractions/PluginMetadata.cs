@@ -126,6 +126,29 @@ public class PluginPrompt
     public string DefaultValue { get; set; } = "";
     
     /// <summary>
+    /// A description of this prompt. This will be shown above the prompt
+    /// when using the built-in PluginPrompts Blazor component.
+    /// </summary>
+    public string Description { get; set; } = "";
+    
+    /// <summary>
+    /// A class to add to this individual prompt element.
+    /// </summary>
+    public string ElementClass { get; set; } = "";
+    
+    /// <summary>
+    /// An optional function to call for this prompt (e.g., button click handler or option loader).
+    /// </summary>
+    public string Function { get; set; } = "";
+    
+    /// <summary>
+    /// Indicates if this prompt element should be initially hidden.
+    /// Can be updated by using the PromptValuesOnUpdate property of the plugin
+    /// to call a function that will be used to update the plugin and/or prompts.
+    /// </summary>
+    public bool Hidden { get; set; }
+    
+    /// <summary>
     /// The unique name/key for this prompt.
     /// </summary>
     public string Name { get; set; } = "";
