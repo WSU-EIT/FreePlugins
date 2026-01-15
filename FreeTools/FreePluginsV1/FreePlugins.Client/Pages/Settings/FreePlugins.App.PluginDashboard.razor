@@ -1,0 +1,424 @@
+@page "/{TenantCode}/Settings/PluginDashboard"
+@page "/Settings/PluginDashboard"
+@implements IDisposable
+@inject BlazorDataModel Model
+@inject HttpClient Http
+
+@* ============================================================================
+   PLUGIN DASHBOARD PAGE
+   ============================================================================
+   Part of: FreePlugins.App (custom extension)
+   
+   PURPOSE:
+     Displays all registered plugins (file-based + compiled) in an admin UI.
+     Provides visibility into the plugin ecosystem without exposing source code.
+   
+   FEATURES:
+     - Summary cards showing plugin counts by type
+     - Filterable/sortable plugin table
+     - Visual indicators for enabled/disabled, compiled/file-based
+     - Tenant restriction display
+   
+   SECURITY:
+     - Admin-only access
+     - No source code exposed
+   ============================================================================ *@
+
+@if (Model.Loaded && Model.LoggedIn && Model.View == _pageName)
+{
+    <div class="container-fluid">
+        @* Page Header *@
+        <div class="@Model.StickyMenuClass">
+            <h1 class="page-title">
+                <Icon Name="Plugins" />
+                Plugin Dashboard
+                <StickyMenuIcon />
+            </h1>
+            <div class="btn-group mb-2" role="group">
+                <a href="@Helpers.BuildUrl("Settings")" class="btn btn-dark">
+                    <i class="fa-solid fa-arrow-left me-1"></i>
+                    <Language Tag="Back" />
+                </a>
+                <button type="button" class="btn btn-primary" @onclick="LoadData" disabled="@_loading">
+                    @if (_loading)
+                    {
+                        <i class="fa-solid fa-spinner fa-spin me-1"></i>
+                    }
+                    else
+                    {
+                        <i class="fa-solid fa-refresh me-1"></i>
+                    }
+                    Refresh
+                </button>
+            </div>
+        </div>
+
+        @if (_loading)
+        {
+            <LoadingMessage />
+        }
+        else if (_response != null && _response.Success)
+        {
+            @* Summary Cards *@
+            <div class="row mb-3">
+                <div class="col-md-2 col-sm-4 col-6 mb-2">
+                    <div class="card text-center h-100">
+                        <div class="card-body py-2">
+                            <h3 class="mb-0 text-primary">@_response.TotalCount</h3>
+                            <small class="text-muted">Total Plugins</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-4 col-6 mb-2">
+                    <div class="card text-center h-100">
+                        <div class="card-body py-2">
+                            <h3 class="mb-0 text-success">@_response.EnabledCount</h3>
+                            <small class="text-muted">Enabled</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-4 col-6 mb-2">
+                    <div class="card text-center h-100">
+                        <div class="card-body py-2">
+                            <h3 class="mb-0 text-info">@_response.FileBasedCount</h3>
+                            <small class="text-muted">File-Based</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-4 col-6 mb-2">
+                    <div class="card text-center h-100">
+                        <div class="card-body py-2">
+                            <h3 class="mb-0 text-warning">@_response.CompiledCount</h3>
+                            <small class="text-muted">Compiled</small>
+                        </div>
+                    </div>
+                </div>
+                @foreach (var kvp in _response.CountsByType.OrderBy(x => x.Key))
+                {
+                    <div class="col-md-2 col-sm-4 col-6 mb-2">
+                        <div class="card text-center h-100">
+                            <div class="card-body py-2">
+                                <h3 class="mb-0 text-secondary">@kvp.Value</h3>
+                                <small class="text-muted">@kvp.Key</small>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            @* Filter Controls *@
+            <div class="card mb-3">
+                <div class="card-body py-2">
+                    <div class="row align-items-center">
+                        <div class="col-md-4 mb-2 mb-md-0">
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text"><i class="fa-solid fa-search"></i></span>
+                                <input type="text" 
+                                       class="form-control" 
+                                       placeholder="Search plugins..." 
+                                       @bind="_searchTerm" 
+                                       @bind:event="oninput" />
+                                @if (!string.IsNullOrEmpty(_searchTerm))
+                                {
+                                    <button type="button" class="btn btn-outline-secondary" @onclick="() => _searchTerm = string.Empty">
+                                        <i class="fa-solid fa-times"></i>
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-2 mb-md-0">
+                            <select class="form-select form-select-sm" @bind="_filterType">
+                                <option value="">All Types</option>
+                                @foreach (var type in _response.CountsByType.Keys.OrderBy(x => x))
+                                {
+                                    <option value="@type">@type (@_response.CountsByType[type])</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-2 mb-md-0">
+                            <select class="form-select form-select-sm" @bind="_filterSource">
+                                <option value="">All Sources</option>
+                                <option value="file">File-Based Only</option>
+                                <option value="compiled">Compiled Only</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-check form-switch">
+                                <input type="checkbox" class="form-check-input" id="showDisabled" @bind="_showDisabled" />
+                                <label class="form-check-label small" for="showDisabled">Show Disabled</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* Plugin Table *@
+            @if (FilteredPlugins.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th style="width: 40px;" class="center">Status</th>
+                                <th>Name</th>
+                                <th style="width: 120px;">Type</th>
+                                <th style="width: 80px;" class="center">Version</th>
+                                <th>Author</th>
+                                <th style="width: 80px;" class="center">Source</th>
+                                <th style="width: 60px;" class="center">Order</th>
+                                <th style="width: 70px;" class="center">Prompts</th>
+                                <th>Tenant Restriction</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var plugin in FilteredPlugins)
+                            {
+                                string rowClass = !plugin.Enabled ? "table-secondary" : "";
+                                <tr class="@rowClass">
+                                    <td class="center">
+                                        @if (plugin.Enabled)
+                                        {
+                                            <span class="badge bg-success" title="Enabled">
+                                                <i class="fa-solid fa-check"></i>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary" title="Disabled">
+                                                <i class="fa-solid fa-pause"></i>
+                                            </span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <strong>@plugin.Name</strong>
+                                        @if (plugin.ContainsSensitiveData)
+                                        {
+                                            <span class="badge bg-warning text-dark ms-1" title="Contains Sensitive Data">
+                                                <i class="fa-solid fa-lock"></i>
+                                            </span>
+                                        }
+                                        @if (!string.IsNullOrEmpty(plugin.Description))
+                                        {
+                                            <br /><small class="text-muted">@plugin.Description</small>
+                                        }
+                                    </td>
+                                    <td>
+                                        <span class="badge @GetTypeBadgeClass(plugin.Type)">@plugin.Type</span>
+                                    </td>
+                                    <td class="center">
+                                        <code class="small">@plugin.Version</code>
+                                    </td>
+                                    <td>@plugin.Author</td>
+                                    <td class="center">
+                                        @if (plugin.IsCompiled)
+                                        {
+                                            <span class="badge bg-warning text-dark" title="@plugin.Source">
+                                                <i class="fa-solid fa-cube"></i> NuGet
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-info" title="@plugin.Source">
+                                                <i class="fa-solid fa-file-code"></i> File
+                                            </span>
+                                        }
+                                    </td>
+                                    <td class="center">@plugin.SortOrder</td>
+                                    <td class="center">
+                                        @if (plugin.PromptCount > 0)
+                                        {
+                                            <span class="badge bg-secondary">@plugin.PromptCount</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">—</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(plugin.LimitToTenants))
+                                        {
+                                            <span class="badge bg-dark" title="Limited to specific tenants">
+                                                <i class="fa-solid fa-building me-1"></i>@plugin.LimitToTenants
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted small">All tenants</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-muted small">
+                    Showing @FilteredPlugins.Count() of @_response.TotalCount plugins
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info">
+                    <i class="fa-solid fa-info-circle me-2"></i>
+                    No plugins match the current filter criteria.
+                </div>
+            }
+        }
+        else if (_response != null && !_response.Success)
+        {
+            <div class="alert alert-danger">
+                <i class="fa-solid fa-exclamation-triangle me-2"></i>
+                @_response.Message
+            </div>
+        }
+    </div>
+}
+
+@code {
+    [Parameter] public string? TenantCode { get; set; }
+
+    private bool _loadedData = false;
+    private bool _loading = true;
+    private string _pageName = "plugindashboard";
+
+    private DataObjects.PluginDashboardResponse? _response;
+    private string _searchTerm = string.Empty;
+    private string _filterType = string.Empty;
+    private string _filterSource = string.Empty;
+    private bool _showDisabled = true;
+
+    /// <summary>
+    /// Returns filtered list of plugins based on current filter settings.
+    /// </summary>
+    private IEnumerable<DataObjects.PluginDashboardInfo> FilteredPlugins
+    {
+        get
+        {
+            if (_response?.Plugins == null) return Enumerable.Empty<DataObjects.PluginDashboardInfo>();
+
+            var query = _response.Plugins.AsEnumerable();
+
+            // Filter by enabled status
+            if (!_showDisabled)
+            {
+                query = query.Where(p => p.Enabled);
+            }
+
+            // Filter by type
+            if (!string.IsNullOrEmpty(_filterType))
+            {
+                query = query.Where(p => p.Type.Equals(_filterType, StringComparison.OrdinalIgnoreCase));
+            }
+
+            // Filter by source (file-based vs compiled)
+            if (_filterSource == "file")
+            {
+                query = query.Where(p => !p.IsCompiled);
+            }
+            else if (_filterSource == "compiled")
+            {
+                query = query.Where(p => p.IsCompiled);
+            }
+
+            // Filter by search term
+            if (!string.IsNullOrWhiteSpace(_searchTerm))
+            {
+                string term = _searchTerm.Trim().ToLowerInvariant();
+                query = query.Where(p =>
+                    p.Name.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                    p.Author.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                    p.Description.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                    p.Type.Contains(term, StringComparison.OrdinalIgnoreCase));
+            }
+
+            return query;
+        }
+    }
+
+    public void Dispose()
+    {
+        Model.OnChange -= OnDataModelUpdated;
+        Model.Subscribers_OnChange.Remove(_pageName);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Model.TenantCodeFromUrl = TenantCode;
+        }
+
+        if (Model.Loaded && Model.LoggedIn)
+        {
+            // Admin-only access
+            if (!Model.User.Admin)
+            {
+                Helpers.NavigateToRoot();
+                return;
+            }
+
+            await Helpers.ValidateUrl(TenantCode);
+
+            if (!_loadedData)
+            {
+                _loadedData = true;
+                await LoadData();
+            }
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        if (!Model.Subscribers_OnChange.Contains(_pageName))
+        {
+            Model.Subscribers_OnChange.Add(_pageName);
+            Model.OnChange += OnDataModelUpdated;
+        }
+
+        Model.View = _pageName;
+    }
+
+    private void OnDataModelUpdated()
+    {
+        if (Model.View == _pageName)
+        {
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoadData()
+    {
+        _loading = true;
+        StateHasChanged();
+
+        try
+        {
+            _response = await Helpers.GetOrPost<DataObjects.PluginDashboardResponse>("api/Data/GetPluginDashboard");
+        }
+        catch (Exception ex)
+        {
+            _response = new DataObjects.PluginDashboardResponse
+            {
+                Success = false,
+                Message = $"Error loading plugin data: {ex.Message}"
+            };
+        }
+
+        _loading = false;
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// Returns the appropriate Bootstrap badge class for a plugin type.
+    /// </summary>
+    private static string GetTypeBadgeClass(string type)
+    {
+        return type.ToLowerInvariant() switch
+        {
+            "general" => "bg-primary",
+            "auth" => "bg-danger",
+            "backgroundprocess" => "bg-success",
+            "userupdate" => "bg-info",
+            _ => "bg-secondary"
+        };
+    }
+}

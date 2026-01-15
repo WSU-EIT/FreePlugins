@@ -406,6 +406,15 @@
         get {
             var output = new List<DataObjects.MenuItem>();
 
+            // Plugin Dashboard - Admin overview of all plugins
+            output.Add(new DataObjects.MenuItem {
+                Title = "Plugin Dashboard",
+                Icon = "Plugins",
+                PageNames = new List<string> { "plugindashboard" },
+                url = Helpers.BuildUrl("Settings/PluginDashboard"),
+                SortOrder = -10,
+            });
+
             // Plugin Testing Page - shows all example plugins
             output.Add(new DataObjects.MenuItem {
                 Title = "Example Plugins",

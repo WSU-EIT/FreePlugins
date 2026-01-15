@@ -1,4 +1,4 @@
-﻿using FreePlugins.Abstractions;
+using FreePlugins.Abstractions;
 
 namespace FreePlugins.ExamplePlugin;
 
@@ -63,19 +63,19 @@ public class AllPromptsPlugin : ICompiledGeneralPlugin
         messages.Add($"Plugin Executed: {plugin.Name}");
         messages.Add($"Version: {plugin.Version}");
         messages.Add($"Is Compiled: {plugin.IsCompiled}");
-        messages.Add("")
+        messages.Add("");
 
         // See if there are any prompts configured
         if (plugin.Prompts.Count > 0) {
             messages.Add($"Prompts Configured: {plugin.Prompts.Count}");
-            messages.Add("")
+            messages.Add("");
 
             // In a real scenario, prompt values would be passed through the context.
             // For now, we just list the configured prompts.
             foreach (var prompt in plugin.Prompts) {
                 string visibility = prompt.Hidden ? " (hidden)" : "";
                 string required = prompt.Required ? " *" : "";
-                messages.Add($"  • {prompt.Name}{required}: {prompt.PromptType}{visibility}");
+                messages.Add($"  � {prompt.Name}{required}: {prompt.PromptType}{visibility}");
             }
         }
 
@@ -348,3 +348,4 @@ public class AllPromptsPlugin : ICompiledGeneralPlugin
 
     #endregion
 }
+
