@@ -17,7 +17,7 @@ namespace FreePlugins.ExamplePlugin;
 /// - Required field validation
 /// </summary>
 [Plugin(
-    Id = "9bbdfb99-80cd-4bbb-8741-6d287437e5f8", // New GUID (original was 9bbdfb99-80cd-4bbb-8741-6d287437e5f7)
+    Id = "9bbdfb99-80cd-4bbb-8741-6d287437e5f8",
     Name = "All Prompts Example (Compiled)",
     Type = PluginTypes.General,
     Version = "1.0.0",
@@ -36,8 +36,7 @@ public class AllPromptsPlugin : ICompiledGeneralPlugin
     /// <summary>
     /// Plugin properties for compatibility with the existing plugin system.
     /// </summary>
-    public Dictionary<string, object> Properties() => new()
-    {
+    public Dictionary<string, object> Properties() => new() {
         { "Id", Guid.Parse("9bbdfb99-80cd-4bbb-8741-6d287437e5f8") },
         { "Author", "WSU EIT" },
         { "ContainsSensitiveData", false },
@@ -64,20 +63,18 @@ public class AllPromptsPlugin : ICompiledGeneralPlugin
         messages.Add($"Plugin Executed: {plugin.Name}");
         messages.Add($"Version: {plugin.Version}");
         messages.Add($"Is Compiled: {plugin.IsCompiled}");
-        messages.Add("");
+        messages.Add("")
 
-        // Display prompt values if available
-        if (plugin.Prompts.Count > 0)
-        {
+        // See if there are any prompts configured
+        if (plugin.Prompts.Count > 0) {
             messages.Add($"Prompts Configured: {plugin.Prompts.Count}");
-            messages.Add("");
+            messages.Add("")
 
-            // In a real scenario, prompt values would be passed through the context
-            // For now, we just list the configured prompts
-            foreach (var prompt in plugin.Prompts)
-            {
-                var visibility = prompt.Hidden ? " (hidden)" : "";
-                var required = prompt.Required ? " *" : "";
+            // In a real scenario, prompt values would be passed through the context.
+            // For now, we just list the configured prompts.
+            foreach (var prompt in plugin.Prompts) {
+                string visibility = prompt.Hidden ? " (hidden)" : "";
+                string required = prompt.Required ? " *" : "";
                 messages.Add($"  • {prompt.Name}{required}: {prompt.PromptType}{visibility}");
             }
         }
@@ -94,8 +91,7 @@ public class AllPromptsPlugin : ICompiledGeneralPlugin
     private static List<PluginPrompt> BuildPrompts() =>
     [
         // Button prompt - executes code when clicked
-        new PluginPrompt
-        {
+        new PluginPrompt {
             Name = "Button1",
             Description = "A sample of how to use a button to execute code.",
             ElementClass = "col col-12",
@@ -103,8 +99,7 @@ public class AllPromptsPlugin : ICompiledGeneralPlugin
             Function = "Button1",
             Required = false,
             SortOrder = 0,
-            Options =
-            [
+            Options = [
                 new PluginPromptOption { Label = "ButtonText", Value = "Test Button" },
                 new PluginPromptOption { Label = "ButtonClass", Value = "btn btn-success" },
                 new PluginPromptOption { Label = "ButtonIcon", Value = "fa-regular fa-circle-check" },
@@ -112,8 +107,7 @@ public class AllPromptsPlugin : ICompiledGeneralPlugin
         },
 
         // Checkbox - single boolean toggle (controls visibility of other fields)
-        new PluginPrompt
-        {
+        new PluginPrompt {
             Name = "Checkbox",
             Description = "Click below to agree and show additional fields.",
             ElementClass = "col col-3",
@@ -123,8 +117,7 @@ public class AllPromptsPlugin : ICompiledGeneralPlugin
         },
 
         // CheckboxList - multiple selection from list
-        new PluginPrompt
-        {
+        new PluginPrompt {
             Name = "CheckboxList",
             Description = "Select one or more options from the list.",
             ElementClass = "col col-3",
@@ -132,8 +125,7 @@ public class AllPromptsPlugin : ICompiledGeneralPlugin
             PromptType = PluginPromptType.CheckboxList,
             Required = true,
             SortOrder = 2,
-            Options =
-            [
+            Options = [
                 new PluginPromptOption { Label = "Option 1", Value = "1" },
                 new PluginPromptOption { Label = "Option 2", Value = "2" },
                 new PluginPromptOption { Label = "Option 3", Value = "3" },
@@ -141,8 +133,7 @@ public class AllPromptsPlugin : ICompiledGeneralPlugin
         },
 
         // Date - date picker
-        new PluginPrompt
-        {
+        new PluginPrompt {
             Name = "Date",
             Description = "Select a date from the calendar.",
             ElementClass = "col col-3",
@@ -153,8 +144,7 @@ public class AllPromptsPlugin : ICompiledGeneralPlugin
         },
 
         // DateTime - date and time picker
-        new PluginPrompt
-        {
+        new PluginPrompt {
             Name = "DateTime",
             Description = "Select a date and time from the calendar.",
             ElementClass = "col col-3",
@@ -165,8 +155,7 @@ public class AllPromptsPlugin : ICompiledGeneralPlugin
         },
 
         // File - single file upload
-        new PluginPrompt
-        {
+        new PluginPrompt {
             Name = "File",
             Description = "Upload a file from your computer.",
             ElementClass = "col col-6",
@@ -177,8 +166,7 @@ public class AllPromptsPlugin : ICompiledGeneralPlugin
         },
 
         // Files - multiple file upload
-        new PluginPrompt
-        {
+        new PluginPrompt {
             Name = "Files",
             Description = "Upload one or more files from your computer.",
             ElementClass = "col col-6",
@@ -189,8 +177,7 @@ public class AllPromptsPlugin : ICompiledGeneralPlugin
         },
 
         // HTML - display-only HTML content
-        new PluginPrompt
-        {
+        new PluginPrompt {
             Name = "HTML",
             Description = "",
             ElementClass = "col col-12",
@@ -202,8 +189,7 @@ public class AllPromptsPlugin : ICompiledGeneralPlugin
         },
 
         // Multiselect - multiple selection dropdown
-        new PluginPrompt
-        {
+        new PluginPrompt {
             Name = "Multiselect",
             Description = "Select one or more values from the list.",
             ElementClass = "col col-12",
@@ -211,8 +197,7 @@ public class AllPromptsPlugin : ICompiledGeneralPlugin
             PromptType = PluginPromptType.Multiselect,
             Required = false,
             SortOrder = 8,
-            Options =
-            [
+            Options = [
                 new PluginPromptOption { Label = "Option 1", Value = "1" },
                 new PluginPromptOption { Label = "Option 2", Value = "2" },
                 new PluginPromptOption { Label = "Option 3", Value = "3" },
@@ -220,8 +205,7 @@ public class AllPromptsPlugin : ICompiledGeneralPlugin
         },
 
         // Number - numeric input
-        new PluginPrompt
-        {
+        new PluginPrompt {
             Name = "Number",
             Description = "Enter a number.",
             ElementClass = "col col-3",
@@ -232,8 +216,7 @@ public class AllPromptsPlugin : ICompiledGeneralPlugin
         },
 
         // Password - masked text input
-        new PluginPrompt
-        {
+        new PluginPrompt {
             Name = "Password",
             Description = "Enter a password.",
             ElementClass = "col col-3",
@@ -244,8 +227,7 @@ public class AllPromptsPlugin : ICompiledGeneralPlugin
         },
 
         // Radio - single selection from list
-        new PluginPrompt
-        {
+        new PluginPrompt {
             Name = "Radio",
             Description = "Select one option from the list.",
             ElementClass = "col col-3",
@@ -253,8 +235,7 @@ public class AllPromptsPlugin : ICompiledGeneralPlugin
             PromptType = PluginPromptType.Radio,
             Required = false,
             SortOrder = 11,
-            Options =
-            [
+            Options = [
                 new PluginPromptOption { Label = "Option 1", Value = "1" },
                 new PluginPromptOption { Label = "Option 2", Value = "2" },
                 new PluginPromptOption { Label = "Option 3", Value = "3" },
@@ -262,8 +243,7 @@ public class AllPromptsPlugin : ICompiledGeneralPlugin
         },
 
         // Select - single selection dropdown
-        new PluginPrompt
-        {
+        new PluginPrompt {
             Name = "Select",
             Description = "Select one option from the list.",
             ElementClass = "col col-3",
@@ -271,8 +251,7 @@ public class AllPromptsPlugin : ICompiledGeneralPlugin
             PromptType = PluginPromptType.Select,
             Required = false,
             SortOrder = 12,
-            Options =
-            [
+            Options = [
                 new PluginPromptOption { Label = "Option 1", Value = "1" },
                 new PluginPromptOption { Label = "Option 2", Value = "2" },
                 new PluginPromptOption { Label = "Option 3", Value = "3" },
@@ -280,8 +259,7 @@ public class AllPromptsPlugin : ICompiledGeneralPlugin
         },
 
         // Select with dynamic options from function
-        new PluginPrompt
-        {
+        new PluginPrompt {
             Name = "Select with Values from Function",
             Description = "",
             ElementClass = "col col-3",
@@ -293,8 +271,7 @@ public class AllPromptsPlugin : ICompiledGeneralPlugin
         },
 
         // Text - single line text input
-        new PluginPrompt
-        {
+        new PluginPrompt {
             Name = "Text",
             Description = "Enter some text.",
             ElementClass = "col col-3",
@@ -305,8 +282,7 @@ public class AllPromptsPlugin : ICompiledGeneralPlugin
         },
 
         // Textarea - multi-line text input
-        new PluginPrompt
-        {
+        new PluginPrompt {
             Name = "Textarea",
             Description = "Please describe...",
             ElementClass = "col col-3",
@@ -317,8 +293,7 @@ public class AllPromptsPlugin : ICompiledGeneralPlugin
         },
 
         // Time - time picker
-        new PluginPrompt
-        {
+        new PluginPrompt {
             Name = "Time",
             Description = "Enter a time.",
             ElementClass = "col col-3",
@@ -348,8 +323,7 @@ public class AllPromptsPlugin : ICompiledGeneralPlugin
     /// </summary>
     public List<PluginPromptOption> GetDynamicOptions()
     {
-        return
-        [
+        return [
             new PluginPromptOption { Label = "Dynamic Option 1", Value = "d1" },
             new PluginPromptOption { Label = "Dynamic Option 2", Value = "d2" },
             new PluginPromptOption { Label = "Dynamic Option 3", Value = "d3" },
@@ -363,13 +337,12 @@ public class AllPromptsPlugin : ICompiledGeneralPlugin
     /// </summary>
     public void OnPromptValuesChanged(PluginMetadata plugin, string promptName, string[] values)
     {
-        if (promptName == "Checkbox" && values.Length > 0)
-        {
-            var isChecked = values[0].Equals("true", StringComparison.OrdinalIgnoreCase);
-            
-            // In the file-based version, this would show/hide fields after the checkbox
-            // When isChecked = true, show all fields
-            // When isChecked = false, hide all fields after the checkbox
+        if (promptName == "Checkbox" && values.Length > 0) {
+            bool isChecked = values[0].Equals("true", StringComparison.OrdinalIgnoreCase);
+
+            // In the file-based version, this would show/hide fields after the checkbox.
+            // When isChecked = true, show all fields.
+            // When isChecked = false, hide all fields after the checkbox.
         }
     }
 

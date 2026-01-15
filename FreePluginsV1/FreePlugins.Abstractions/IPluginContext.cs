@@ -10,36 +10,40 @@ public interface IPluginContext
     /// Gets the plugin metadata.
     /// </summary>
     PluginMetadata Plugin { get; }
-    
+
     /// <summary>
     /// Gets the service provider for resolving dependencies.
     /// </summary>
     IServiceProvider Services { get; }
-    
+
     /// <summary>
     /// Gets a service of the specified type.
     /// </summary>
     T? GetService<T>() where T : class;
-    
+
     /// <summary>
     /// Gets a required service of the specified type.
     /// </summary>
     /// <exception cref="InvalidOperationException">Thrown when the service is not registered.</exception>
     T GetRequiredService<T>() where T : class;
-    
+
     /// <summary>
     /// Log an informational message.
     /// </summary>
+    /// <param name="message">The message to log.</param>
     void LogInfo(string message);
-    
+
     /// <summary>
     /// Log a warning message.
     /// </summary>
+    /// <param name="message">The message to log.</param>
     void LogWarning(string message);
-    
+
     /// <summary>
     /// Log an error message.
     /// </summary>
+    /// <param name="message">The message to log.</param>
+    /// <param name="exception">Optional exception details.</param>
     void LogError(string message, Exception? exception = null);
 }
 
@@ -52,12 +56,12 @@ public interface IPluginAuthContext : IPluginContext
     /// The URL of the request.
     /// </summary>
     string Url { get; }
-    
+
     /// <summary>
     /// The tenant ID for the request.
     /// </summary>
     Guid TenantId { get; }
-    
+
     /// <summary>
     /// The HTTP context for the request.
     /// </summary>

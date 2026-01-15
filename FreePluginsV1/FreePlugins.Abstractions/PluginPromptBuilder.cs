@@ -20,13 +20,11 @@ public class PluginPromptBuilder
     public static PluginPromptBuilder Button(string name, string text, string cssClass = "btn btn-primary", string? icon = null)
     {
         var builder = Create(name).OfType(PluginPromptType.Button);
-        var options = new List<PluginPromptOption>
-        {
+        var options = new List<PluginPromptOption> {
             new() { Label = "ButtonText", Value = text },
             new() { Label = "ButtonClass", Value = cssClass },
         };
-        if (!string.IsNullOrEmpty(icon))
-        {
+        if (!String.IsNullOrEmpty(icon)) {
             options.Add(new() { Label = "ButtonIcon", Value = icon });
         }
         builder._prompt.Options = options;
@@ -36,91 +34,91 @@ public class PluginPromptBuilder
     /// <summary>
     /// Creates a checkbox prompt.
     /// </summary>
-    public static PluginPromptBuilder Checkbox(string name, string description = "") 
+    public static PluginPromptBuilder Checkbox(string name, string description = "")
         => Create(name).OfType(PluginPromptType.Checkbox).WithDescription(description);
 
     /// <summary>
     /// Creates a checkbox list prompt.
     /// </summary>
-    public static PluginPromptBuilder CheckboxList(string name, string description = "") 
+    public static PluginPromptBuilder CheckboxList(string name, string description = "")
         => Create(name).OfType(PluginPromptType.CheckboxList).WithDescription(description);
 
     /// <summary>
     /// Creates a date prompt.
     /// </summary>
-    public static PluginPromptBuilder Date(string name, string description = "") 
+    public static PluginPromptBuilder Date(string name, string description = "")
         => Create(name).OfType(PluginPromptType.Date).WithDescription(description);
 
     /// <summary>
     /// Creates a datetime prompt.
     /// </summary>
-    public static PluginPromptBuilder DateTime(string name, string description = "") 
+    public static PluginPromptBuilder DateTime(string name, string description = "")
         => Create(name).OfType(PluginPromptType.DateTime).WithDescription(description);
 
     /// <summary>
     /// Creates a file upload prompt.
     /// </summary>
-    public static PluginPromptBuilder File(string name, string description = "") 
+    public static PluginPromptBuilder File(string name, string description = "")
         => Create(name).OfType(PluginPromptType.File).WithDescription(description);
 
     /// <summary>
     /// Creates a multi-file upload prompt.
     /// </summary>
-    public static PluginPromptBuilder Files(string name, string description = "") 
+    public static PluginPromptBuilder Files(string name, string description = "")
         => Create(name).OfType(PluginPromptType.Files).WithDescription(description);
 
     /// <summary>
     /// Creates an HTML display prompt.
     /// </summary>
-    public static PluginPromptBuilder Html(string name, string htmlContent) 
+    public static PluginPromptBuilder Html(string name, string htmlContent)
         => Create(name).OfType(PluginPromptType.HTML).WithDefaultValue(htmlContent);
 
     /// <summary>
     /// Creates a multiselect prompt.
     /// </summary>
-    public static PluginPromptBuilder Multiselect(string name, string description = "") 
+    public static PluginPromptBuilder Multiselect(string name, string description = "")
         => Create(name).OfType(PluginPromptType.Multiselect).WithDescription(description);
 
     /// <summary>
     /// Creates a number prompt.
     /// </summary>
-    public static PluginPromptBuilder Number(string name, string description = "") 
+    public static PluginPromptBuilder Number(string name, string description = "")
         => Create(name).OfType(PluginPromptType.Number).WithDescription(description);
 
     /// <summary>
     /// Creates a password prompt.
     /// </summary>
-    public static PluginPromptBuilder Password(string name, string description = "") 
+    public static PluginPromptBuilder Password(string name, string description = "")
         => Create(name).OfType(PluginPromptType.Password).WithDescription(description);
 
     /// <summary>
     /// Creates a radio button prompt.
     /// </summary>
-    public static PluginPromptBuilder Radio(string name, string description = "") 
+    public static PluginPromptBuilder Radio(string name, string description = "")
         => Create(name).OfType(PluginPromptType.Radio).WithDescription(description);
 
     /// <summary>
     /// Creates a select dropdown prompt.
     /// </summary>
-    public static PluginPromptBuilder Select(string name, string description = "") 
+    public static PluginPromptBuilder Select(string name, string description = "")
         => Create(name).OfType(PluginPromptType.Select).WithDescription(description);
 
     /// <summary>
     /// Creates a text input prompt.
     /// </summary>
-    public static PluginPromptBuilder Text(string name, string description = "") 
+    public static PluginPromptBuilder Text(string name, string description = "")
         => Create(name).OfType(PluginPromptType.Text).WithDescription(description);
 
     /// <summary>
     /// Creates a textarea prompt.
     /// </summary>
-    public static PluginPromptBuilder Textarea(string name, string description = "") 
+    public static PluginPromptBuilder Textarea(string name, string description = "")
         => Create(name).OfType(PluginPromptType.Textarea).WithDescription(description);
 
     /// <summary>
     /// Creates a time prompt.
     /// </summary>
-    public static PluginPromptBuilder Time(string name, string description = "") 
+    public static PluginPromptBuilder Time(string name, string description = "")
         => Create(name).OfType(PluginPromptType.Time).WithDescription(description);
 
     // Fluent configuration methods

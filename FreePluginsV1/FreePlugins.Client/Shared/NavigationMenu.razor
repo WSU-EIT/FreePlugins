@@ -97,6 +97,35 @@
                                 </ul>
                             </li>
                         }
+
+                        @if (Model.User.Admin && MenuItemsPlugins.Any()) {
+                            <li class="nav-item dropdown">
+                                <a class="@(PluginsView ? "nav-link dropdown-toggle active": "nav-link dropdown-toggle")" href="#" id="pluginsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <Icon Name="Plugins" />
+                                    <span class="icon-text">Plugins</span>
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="pluginsDropdown">
+                                    @foreach(var item in MenuItemsPlugins) {
+                                        var itemClass = "dropdown-item";
+
+                                        if (item.PageNames.Contains(Model.View, StringComparer.CurrentCultureIgnoreCase)) {
+                                            itemClass += " active";
+                                        }
+
+                                        <li>
+                                            <a class="@itemClass" href="@item.url">
+                                                @if (!String.IsNullOrWhiteSpace(item.Icon)) {
+                                                    <Icon Name="@item.Icon" />
+                                                }
+                                                <span class="icon-text">
+                                                    @((MarkupString)item.Title)
+                                                </span>
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </li>
+                        }
                     } else if (Model.Loaded) {
                         <li class="nav-item">
                             <a class="nav-link @(Model.View == "login" ? "active" : "")" href="@Helpers.BuildUrl("Login")">
@@ -189,6 +218,17 @@
         get {
             var adminMenuItems = MenuItemsAdmin.Select(x => x.PageNames).SelectMany(x => x).ToList();
             if (adminMenuItems.Contains(Model.View, StringComparer.CurrentCultureIgnoreCase)) {
+                return true;
+            }
+
+            return false;
+        }
+    }
+
+    protected bool PluginsView {
+        get {
+            var pluginMenuItems = MenuItemsPlugins.Select(x => x.PageNames).SelectMany(x => x).ToList();
+            if (pluginMenuItems.Contains(Model.View, StringComparer.CurrentCultureIgnoreCase)) {
                 return true;
             }
 
@@ -359,6 +399,56 @@
             output = output.OrderBy(x => x.SortOrder).ThenBy(x => x.Title).ToList();
 
             return output;
+        }
+    }
+
+    protected List<DataObjects.MenuItem> MenuItemsPlugins {
+        get {
+            var output = new List<DataObjects.MenuItem>();
+
+            // Plugin Testing Page - shows all example plugins
+            output.Add(new DataObjects.MenuItem {
+                Title = "Example Plugins",
+                Icon = "Plugins",
+                PageNames = new List<string> { "plugins" },
+                url = Helpers.BuildUrl("Plugins"),
+                SortOrder = 0,
+            });
+
+            // Test Pages
+            output.Add(new DataObjects.MenuItem {
+                Title = "Monaco Editor",
+                Icon = "Code",
+                PageNames = new List<string> { "monaco" },
+                url = Helpers.BuildUrl("TestPages/Monaco"),
+                SortOrder = 100,
+            });
+
+            output.Add(new DataObjects.MenuItem {
+                Title = "Double Click Test",
+                Icon = "Test",
+                PageNames = new List<string> { "doubleclick" },
+                url = Helpers.BuildUrl("TestPages/DoubleClick"),
+                SortOrder = 100,
+            });
+
+            output.Add(new DataObjects.MenuItem {
+                Title = "Sort Test",
+                Icon = "Sort",
+                PageNames = new List<string> { "sort" },
+                url = Helpers.BuildUrl("TestPages/Sort"),
+                SortOrder = 100,
+            });
+
+            output.Add(new DataObjects.MenuItem {
+                Title = "Test Page",
+                Icon = "Test",
+                PageNames = new List<string> { "test" },
+                url = Helpers.BuildUrl("TestPages/Test"),
+                SortOrder = 100,
+            });
+
+            return output.OrderBy(x => x.SortOrder).ThenBy(x => x.Title).ToList();
         }
     }
 

@@ -16,7 +16,7 @@ namespace FreePlugins.DataAccessExamplePlugin;
 /// - Comprehensive plugin information display
 /// </summary>
 [Plugin(
-    Id = "4dd6cae9-b9a7-4048-8f7c-f338151d46ac", // New GUID (original was 4dd6cae9-b9a7-4048-8f7c-f338151d46ab)
+    Id = "4dd6cae9-b9a7-4048-8f7c-f338151d46ac",
     Name = "Context Info Example (Compiled)",
     Type = PluginTypes.General,
     Version = "1.0.0",
@@ -35,11 +35,10 @@ public class ContextInfoPlugin : ICompiledGeneralPlugin
     /// <summary>
     /// Plugin properties for compatibility with the existing plugin system.
     /// </summary>
-    public Dictionary<string, object> Properties() => new()
-    {
+    public Dictionary<string, object> Properties() => new() {
         { "Id", Guid.Parse("4dd6cae9-b9a7-4048-8f7c-f338151d46ac") },
         { "Author", "WSU EIT" },
-        { "ContainsSensitiveData", true }, // Marked as sensitive for demonstration
+        { "ContainsSensitiveData", true },
         { "Description", "Demonstrates accessing plugin metadata and context." },
         { "Name", "Context Info Example (Compiled)" },
         { "SortOrder", 3 },
@@ -66,7 +65,7 @@ public class ContextInfoPlugin : ICompiledGeneralPlugin
         // Log start
         context.LogInfo($"Context Info plugin executing: {plugin.Name}");
 
-        // Plugin Information Section
+        // First, display plugin information
         messages.Add("═══════════════════════════════════════");
         messages.Add("         PLUGIN INFORMATION            ");
         messages.Add("═══════════════════════════════════════");
@@ -82,48 +81,41 @@ public class ContextInfoPlugin : ICompiledGeneralPlugin
         messages.Add($"Contains Sensitive Data: {plugin.ContainsSensitiveData}");
         messages.Add("");
 
-        // Description
-        if (!string.IsNullOrWhiteSpace(plugin.Description))
-        {
+        // See if there is a description
+        if (!String.IsNullOrWhiteSpace(plugin.Description)) {
             messages.Add($"Description: {plugin.Description}");
             messages.Add("");
         }
 
-        // Prompts Section
+        // Now, display prompts configuration
         messages.Add("═══════════════════════════════════════");
         messages.Add("         PROMPTS CONFIGURATION         ");
         messages.Add("═══════════════════════════════════════");
         messages.Add("");
         messages.Add($"Prompts Configured: {plugin.Prompts.Count}");
-        if (plugin.Prompts.Count > 0)
-        {
-            foreach (var prompt in plugin.Prompts)
-            {
+        if (plugin.Prompts.Count > 0) {
+            foreach (var prompt in plugin.Prompts) {
                 messages.Add($"  • {prompt.Name}: {prompt.PromptType}");
             }
         }
         messages.Add("");
 
-        // Tenant Restrictions Section
+        // Next, display tenant restrictions
         messages.Add("═══════════════════════════════════════");
         messages.Add("         TENANT RESTRICTIONS           ");
         messages.Add("═══════════════════════════════════════");
         messages.Add("");
-        if (plugin.LimitToTenants.Count > 0)
-        {
+        if (plugin.LimitToTenants.Count > 0) {
             messages.Add("Restricted to tenants:");
-            foreach (var tenantId in plugin.LimitToTenants)
-            {
+            foreach (var tenantId in plugin.LimitToTenants) {
                 messages.Add($"  • {tenantId}");
             }
-        }
-        else
-        {
+        } else {
             messages.Add("Available to all tenants (no restrictions)");
         }
         messages.Add("");
 
-        // Context Services Section
+        // Then, display context services
         messages.Add("═══════════════════════════════════════");
         messages.Add("         CONTEXT SERVICES              ");
         messages.Add("═══════════════════════════════════════");
@@ -140,33 +132,26 @@ public class ContextInfoPlugin : ICompiledGeneralPlugin
         messages.Add("  • context.LogError() - Log errors");
         messages.Add("");
 
-        // Custom Properties Section
+        // Finally, display custom properties
         messages.Add("═══════════════════════════════════════");
         messages.Add("         CUSTOM PROPERTIES             ");
         messages.Add("═══════════════════════════════════════");
         messages.Add("");
-        if (plugin.Properties.Count > 0)
-        {
+        if (plugin.Properties.Count > 0) {
             messages.Add($"Custom Properties: {plugin.Properties.Count}");
-            foreach (var prop in plugin.Properties)
-            {
+            foreach (var prop in plugin.Properties) {
                 var valueStr = prop.Value?.ToString() ?? "null";
-                if (valueStr.Length > 50)
-                {
+                if (valueStr.Length > 50) {
                     valueStr = valueStr[..50] + "...";
                 }
                 messages.Add($"  • {prop.Key}: {valueStr}");
             }
-        }
-        else
-        {
+        } else {
             messages.Add("No custom properties defined");
         }
         messages.Add("");
 
-        // Return data
-        var output = new object[] 
-        { 
+        var output = new object[] {
             "Data object returned from plugin",
             plugin.Id,
             plugin.Version

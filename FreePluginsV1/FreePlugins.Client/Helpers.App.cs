@@ -8,6 +8,10 @@ public static partial class Helpers
         get {
             Dictionary<string, List<string>> icons = new Dictionary<string, List<string>> {
                 { "fa:fa-solid fa-home", new List<string> { "IconName1", "IconName2" }},
+                { "fa:fa-solid fa-puzzle-piece", new List<string> { "Plugins", "Plugin" }},
+                { "fa:fa-solid fa-code", new List<string> { "Code", "Monaco" }},
+                { "fa:fa-solid fa-vial", new List<string> { "Test", "Testing" }},
+                { "fa:fa-solid fa-sort", new List<string> { "Sort", "Sorting" }},
             };
 
             return icons;

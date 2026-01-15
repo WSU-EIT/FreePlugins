@@ -10,15 +10,16 @@ public class PluginContext : IPluginContext
 {
     private readonly IServiceProvider _services;
     private readonly ILogger? _logger;
+    private PluginMetadata _plugin;
 
     public PluginContext(PluginMetadata plugin, IServiceProvider services, ILogger? logger = null)
     {
-        Plugin = plugin;
+        _plugin = plugin;
         _services = services;
         _logger = logger;
     }
 
-    public PluginMetadata Plugin { get; }
+    public PluginMetadata Plugin => _plugin;
 
     public IServiceProvider Services => _services;
 
@@ -34,27 +35,24 @@ public class PluginContext : IPluginContext
 
     public void LogInfo(string message)
     {
-        _logger?.LogInformation("[{PluginName}] {Message}", Plugin.Name, message);
-        Console.WriteLine($"[{Plugin.Name}] INFO: {message}");
+        _logger?.LogInformation("[{PluginName}] {Message}", _plugin.Name, message);
+        Console.WriteLine($"[{_plugin.Name}] INFO: {message}");
     }
 
     public void LogWarning(string message)
     {
-        _logger?.LogWarning("[{PluginName}] {Message}", Plugin.Name, message);
-        Console.WriteLine($"[{Plugin.Name}] WARN: {message}");
+        _logger?.LogWarning("[{PluginName}] {Message}", _plugin.Name, message);
+        Console.WriteLine($"[{_plugin.Name}] WARN: {message}");
     }
 
     public void LogError(string message, Exception? exception = null)
     {
-        if (exception != null)
-        {
-            _logger?.LogError(exception, "[{PluginName}] {Message}", Plugin.Name, message);
-            Console.WriteLine($"[{Plugin.Name}] ERROR: {message} - {exception.Message}");
-        }
-        else
-        {
-            _logger?.LogError("[{PluginName}] {Message}", Plugin.Name, message);
-            Console.WriteLine($"[{Plugin.Name}] ERROR: {message}");
+        if (exception != null) {
+            _logger?.LogError(exception, "[{PluginName}] {Message}", _plugin.Name, message);
+            Console.WriteLine($"[{_plugin.Name}] ERROR: {message} - {exception.Message}");
+        } else {
+            _logger?.LogError("[{PluginName}] {Message}", _plugin.Name, message);
+            Console.WriteLine($"[{_plugin.Name}] ERROR: {message}");
         }
     }
 }
@@ -64,23 +62,27 @@ public class PluginContext : IPluginContext
 /// </summary>
 public class PluginAuthContext : PluginContext, IPluginAuthContext
 {
+    private string _url;
+    private Guid _tenantId;
+    private object _httpContext;
+
     public PluginAuthContext(
-        PluginMetadata plugin, 
-        IServiceProvider services, 
-        string url, 
-        Guid tenantId, 
+        PluginMetadata plugin,
+        IServiceProvider services,
+        string url,
+        Guid tenantId,
         object httpContext,
-        ILogger? logger = null) 
+        ILogger? logger = null)
         : base(plugin, services, logger)
     {
-        Url = url;
-        TenantId = tenantId;
-        HttpContext = httpContext;
+        _url = url;
+        _tenantId = tenantId;
+        _httpContext = httpContext;
     }
 
-    public string Url { get; }
-    public Guid TenantId { get; }
-    public object HttpContext { get; }
+    public string Url => _url;
+    public Guid TenantId => _tenantId;
+    public object HttpContext => _httpContext;
 }
 
 /// <summary>
@@ -88,15 +90,17 @@ public class PluginAuthContext : PluginContext, IPluginAuthContext
 /// </summary>
 public class PluginUserContext : PluginContext, IPluginUserContext
 {
+    private object? _user;
+
     public PluginUserContext(
-        PluginMetadata plugin, 
-        IServiceProvider services, 
+        PluginMetadata plugin,
+        IServiceProvider services,
         object? user,
-        ILogger? logger = null) 
+        ILogger? logger = null)
         : base(plugin, services, logger)
     {
-        User = user;
+        _user = user;
     }
 
-    public object? User { get; }
+    public object? User => _user;
 }

@@ -21,7 +21,7 @@ namespace FreePlugins.TenantRestrictedPlugin;
 /// - Region-specific functionality
 /// </summary>
 [Plugin(
-    Id = "8507d6b9-deb4-45d6-bd6c-a8267c4a1693", // New GUID (original was 8507d6b9-deb4-45d6-bd6c-a8267c4a1692)
+    Id = "8507d6b9-deb4-45d6-bd6c-a8267c4a1693",
     Name = "Tenant-Restricted Example (Compiled)",
     Type = PluginTypes.General,
     Version = "1.0.0",
@@ -40,8 +40,7 @@ public class TenantSpecificPlugin : ICompiledGeneralPlugin
     /// <summary>
     /// Plugin properties for compatibility with the existing plugin system.
     /// </summary>
-    public Dictionary<string, object> Properties() => new()
-    {
+    public Dictionary<string, object> Properties() => new() {
         { "Id", Guid.Parse("8507d6b9-deb4-45d6-bd6c-a8267c4a1693") },
         { "Author", "WSU EIT" },
         { "ContainsSensitiveData", false },
@@ -51,10 +50,10 @@ public class TenantSpecificPlugin : ICompiledGeneralPlugin
         { "Type", PluginTypes.General },
         { "Version", "1.0.0" },
         { "Enabled", true },
-        // IMPORTANT: This restricts the plugin to specific tenants only
-        // Users in other tenants will not see or be able to execute this plugin
-        { "LimitToTenants", new List<Guid> { 
-            Guid.Parse("00000000-0000-0000-0000-000000000002") 
+        // This restricts the plugin to specific tenants only.
+        // Users in other tenants will not see or be able to execute this plugin.
+        { "LimitToTenants", new List<Guid> {
+            Guid.Parse("00000000-0000-0000-0000-000000000002")
         }},
     };
 
@@ -68,32 +67,32 @@ public class TenantSpecificPlugin : ICompiledGeneralPlugin
     /// The tenant restriction is enforced by the plugin system
     /// before this method is called.
     /// </remarks>
-    public async Task<PluginResult> ExecuteAsync(IPluginContext context)
+    /// <param name="Context">The plugin execution context.</param>
+    public async Task<PluginResult> ExecuteAsync(IPluginContext Context)
     {
         await Task.CompletedTask;
 
-        var messages = new List<string>();
-        var plugin = context.Plugin;
+        List<string> messages = new();
+        PluginMetadata plugin = Context.Plugin;
 
-        context.LogInfo($"Tenant-restricted plugin executing: {plugin.Name}");
+        Context.LogInfo($"Tenant-restricted plugin executing: {plugin.Name}");
 
         messages.Add($"Plugin: {plugin.Name}");
         messages.Add($"Version: {plugin.Version}");
         messages.Add($"Is Compiled: {plugin.IsCompiled}");
-        messages.Add("");
+        messages.Add(String.Empty);
         messages.Add("This plugin is tenant-restricted.");
         messages.Add("It is only visible to tenants listed in LimitToTenants.");
-        messages.Add("");
+        messages.Add(String.Empty);
         messages.Add("Restricted to tenant(s):");
-        
-        foreach (var tenantId in plugin.LimitToTenants)
-        {
+
+        foreach (Guid tenantId in plugin.LimitToTenants) {
             messages.Add($"  • {tenantId}");
         }
 
-        var output = new object[] { "Data from tenant-restricted plugin" };
+        object[] output = ["Data from tenant-restricted plugin"];
 
-        context.LogInfo("Tenant-restricted plugin completed");
+        Context.LogInfo("Tenant-restricted plugin completed");
 
         return PluginResult.Success(messages, output);
     }
@@ -116,8 +115,7 @@ public class MultiTenantPlugin : ICompiledGeneralPlugin
 {
     public static Type PluginType => typeof(MultiTenantPlugin);
 
-    public Dictionary<string, object> Properties() => new()
-    {
+    public Dictionary<string, object> Properties() => new() {
         { "Id", Guid.Parse("8507d6b9-deb4-45d6-bd6c-a8267c4a1694") },
         { "Author", "WSU EIT" },
         { "ContainsSensitiveData", false },
@@ -128,31 +126,33 @@ public class MultiTenantPlugin : ICompiledGeneralPlugin
         { "Version", "1.0.0" },
         { "Enabled", true },
         // Restricted to multiple specific tenants
-        { "LimitToTenants", new List<Guid> { 
+        { "LimitToTenants", new List<Guid> {
             Guid.Parse("00000000-0000-0000-0000-000000000001"),
             Guid.Parse("00000000-0000-0000-0000-000000000002"),
             Guid.Parse("00000000-0000-0000-0000-000000000003"),
         }},
     };
 
-    public async Task<PluginResult> ExecuteAsync(IPluginContext context)
+    /// <summary>
+    /// Execute the multi-tenant plugin.
+    /// </summary>
+    /// <param name="Context">The plugin execution context.</param>
+    public async Task<PluginResult> ExecuteAsync(IPluginContext Context)
     {
         await Task.CompletedTask;
 
-        var messages = new List<string>
-        {
-            $"Plugin: {context.Plugin.Name}",
+        List<string> messages = new() {
+            $"Plugin: {Context.Plugin.Name}",
             "This plugin is available to 3 specific tenants.",
-            "",
+            String.Empty,
             "Tenant IDs:"
         };
 
-        foreach (var tenantId in context.Plugin.LimitToTenants)
-        {
+        foreach (Guid tenantId in Context.Plugin.LimitToTenants) {
             messages.Add($"  • {tenantId}");
         }
 
-        context.LogInfo("Multi-tenant plugin executed");
+        Context.LogInfo("Multi-tenant plugin executed");
 
         return PluginResult.Success(messages);
     }

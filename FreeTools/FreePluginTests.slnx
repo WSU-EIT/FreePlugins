@@ -45,11 +45,19 @@
   </Folder>
   <Folder Name="/FreePluginsV1/">
     <Project Path="../FreePluginsV1/Docs/Docs.csproj" />
+    <Project Path="../FreePluginsV1/FreePlugins.Abstractions.Integration/FreePlugins.Abstractions.Integration.csproj" />
+    <Project Path="../FreePluginsV1/FreePlugins.Abstractions/FreePlugins.Abstractions.csproj" />
+    <Project Path="../FreePluginsV1/FreePlugins.AuthExamplePlugin/FreePlugins.AuthExamplePlugin.csproj" />
     <Project Path="../FreePluginsV1/FreePlugins.Client/FreePlugins.Client.csproj" />
     <Project Path="../FreePluginsV1/FreePlugins.DataAccess/FreePlugins.DataAccess.csproj" />
+    <Project Path="../FreePluginsV1/FreePlugins.DataAccessExamplePlugin/FreePlugins.DataAccessExamplePlugin.csproj" />
     <Project Path="../FreePluginsV1/FreePlugins.DataObjects/FreePlugins.DataObjects.csproj" />
     <Project Path="../FreePluginsV1/FreePlugins.EFModels/FreePlugins.EFModels.csproj" />
+    <Project Path="../FreePluginsV1/FreePlugins.ExamplePlugin/FreePlugins.ExamplePlugin.csproj" />
     <Project Path="../FreePluginsV1/FreePlugins.Plugins/FreePlugins.Plugins.csproj" />
+    <Project Path="../FreePluginsV1/FreePlugins.SamplePlugin/FreePlugins.SamplePlugin.csproj" />
+    <Project Path="../FreePluginsV1/FreePlugins.TenantRestrictedPlugin/FreePlugins.TenantRestrictedPlugin.csproj" />
+    <Project Path="../FreePluginsV1/FreePlugins.UserUpdateExamplePlugin/FreePlugins.UserUpdateExamplePlugin.csproj" />
     <Project Path="../FreePluginsV1/FreePlugins/FreePlugins.csproj" />
   </Folder>
   <Folder Name="/FreeTools/">

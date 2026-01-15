@@ -1,3 +1,4 @@
+using FreePlugins.Abstractions;
 using FreePlugins.Client.Pages;
 using FreePlugins.Components;
 using FreePlugins.Server.Hubs;
@@ -98,6 +99,22 @@ namespace FreePlugins
             string pluginsPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Plugins");
             plugins.Load(pluginsPath);
             builder.Services.AddTransient<Plugins.IPlugins>(x => plugins);
+
+            #endregion
+
+            #region Compiled Plugins Registration
+
+            // Register compiled plugins from NuGet packages/project references.
+            // These are strongly-typed plugins that don't require dynamic compilation.
+            builder.Services.AddPluginsFromAssembly(typeof(FreePlugins.SamplePlugin.SampleBackgroundPlugin).Assembly);
+            builder.Services.AddPluginsFromAssembly(typeof(FreePlugins.ExamplePlugin.AllPromptsPlugin).Assembly);
+            builder.Services.AddPluginsFromAssembly(typeof(FreePlugins.AuthExamplePlugin.CustomAuthPlugin).Assembly);
+            builder.Services.AddPluginsFromAssembly(typeof(FreePlugins.UserUpdateExamplePlugin.UserSyncPlugin).Assembly);
+            builder.Services.AddPluginsFromAssembly(typeof(FreePlugins.TenantRestrictedPlugin.TenantSpecificPlugin).Assembly);
+            builder.Services.AddPluginsFromAssembly(typeof(FreePlugins.DataAccessExamplePlugin.ContextInfoPlugin).Assembly);
+
+            // Register the compiled plugin executor
+            builder.Services.AddTransient<CompiledPluginExecutor>();
 
             #endregion
 

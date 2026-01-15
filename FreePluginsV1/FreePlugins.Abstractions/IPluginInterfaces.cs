@@ -35,11 +35,13 @@ public interface IPluginAuth : IPluginBase
     /// <summary>
     /// Handle user login.
     /// </summary>
+    /// <param name="context">The auth plugin context with HTTP context and tenant info.</param>
     Task<PluginResult> LoginAsync(IPluginAuthContext context);
-    
+
     /// <summary>
     /// Handle user logout.
     /// </summary>
+    /// <param name="context">The auth plugin context with HTTP context and tenant info.</param>
     Task<PluginResult> LogoutAsync(IPluginAuthContext context);
 }
 
@@ -51,5 +53,6 @@ public interface IPluginUserUpdate : IPluginBase
     /// <summary>
     /// Handle user update.
     /// </summary>
+    /// <param name="context">The user plugin context with user data.</param>
     Task<PluginResult> UpdateUserAsync(IPluginUserContext context);
 }

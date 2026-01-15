@@ -17,7 +17,7 @@ namespace FreePlugins.AuthExamplePlugin;
 /// - Error handling and validation
 /// </summary>
 [Plugin(
-    Id = "a5a8354d-f5c6-435e-90e6-2bf86f0b4d36", // New GUID (original was a5a8354d-f5c6-435e-90e6-2bf86f0b4d35)
+    Id = "a5a8354d-f5c6-435e-90e6-2bf86f0b4d36",
     Name = "Custom Auth Example (Compiled)",
     Type = PluginTypes.Auth,
     Version = "1.0.0",
@@ -36,20 +36,17 @@ public class CustomAuthPlugin : ICompiledAuthPlugin
     /// <summary>
     /// Plugin properties for compatibility with the existing plugin system.
     /// </summary>
-    public Dictionary<string, object> Properties() => new()
-    {
+    public Dictionary<string, object> Properties() => new() {
         { "Id", Guid.Parse("a5a8354d-f5c6-435e-90e6-2bf86f0b4d36") },
         { "Author", "WSU EIT" },
-        { "ContainsSensitiveData", true }, // Auth plugins handle sensitive credentials
+        { "ContainsSensitiveData", true },
         { "Description", "Custom authentication with username/password prompts." },
         { "Name", "Custom Auth Example (Compiled)" },
         { "Prompts", BuildPrompts() },
         { "Type", PluginTypes.Auth },
         { "Version", "1.0.0" },
         { "Enabled", true },
-        // Tenant restriction - only available for specific tenant
         { "LimitToTenants", new List<Guid> { Guid.Parse("00000000-0000-0000-0000-000000000001") } },
-        // Custom button styling for the login page
         { "ButtonText", "Custom Auth Login" },
         { "ButtonClass", "btn btn-primary" },
         { "ButtonIcon", "<i class=\"icon fa-solid fa-sign-in-alt\"></i>" },
@@ -67,47 +64,40 @@ public class CustomAuthPlugin : ICompiledAuthPlugin
 
         context.LogInfo($"Auth plugin login attempt for tenant: {context.TenantId}");
 
-        // Validate tenant
-        if (context.TenantId == Guid.Empty)
-        {
+        // Make sure the tenant ID is valid
+        if (context.TenantId == Guid.Empty) {
             messages.Add("Invalid tenant ID");
             return PluginResult.Failure(messages);
         }
 
-        // Validate URL
-        if (string.IsNullOrWhiteSpace(context.Url))
-        {
+        // Make sure the URL is provided
+        if (String.IsNullOrWhiteSpace(context.Url)) {
             messages.Add("Missing URL parameter");
             return PluginResult.Failure(messages);
         }
 
         // Extract username and password from prompts
-        string username = string.Empty;
-        string password = string.Empty;
+        string username = "";
+        string password = "";
 
-        // In a real implementation, prompt values would be available through the context
-        // For this example, we document the expected behavior
-        
-        // Simulate extracting credentials from prompts
-        // In actual usage, these would come from plugin.PromptValues
-        foreach (var prompt in plugin.Prompts)
-        {
+        // In a real implementation, prompt values would be available through the context.
+        // For this example, we document the expected behavior.
+
+        // Simulate extracting credentials from prompts.
+        // In actual usage, these would come from plugin.PromptValues.
+        foreach (var prompt in plugin.Prompts) {
             context.LogInfo($"Processing prompt: {prompt.Name}");
-            
+
             // Note: In compiled plugins, prompt values would be passed through
-            // an extended context or separate mechanism
+            // an extended context or separate mechanism.
         }
 
-        // Validate credentials were provided
-        // (In real implementation, check actual prompt values)
-        if (string.IsNullOrWhiteSpace(username))
-        {
-            // For demo purposes, we'll show the expected validation
+        // See if credentials were provided
+        if (String.IsNullOrWhiteSpace(username)) {
             messages.Add("Auth plugin executed - Username prompt configured");
         }
 
-        if (string.IsNullOrWhiteSpace(password))
-        {
+        if (String.IsNullOrWhiteSpace(password)) {
             messages.Add("Auth plugin executed - Password prompt configured");
         }
 
@@ -123,8 +113,6 @@ public class CustomAuthPlugin : ICompiledAuthPlugin
 
         context.LogInfo("Auth plugin login completed");
 
-        // Return success with informational messages
-        // In real usage, return the authenticated user object
         return PluginResult.Success(messages);
     }
 
@@ -159,16 +147,14 @@ public class CustomAuthPlugin : ICompiledAuthPlugin
     /// </summary>
     private static List<PluginPrompt> BuildPrompts() =>
     [
-        new PluginPrompt
-        {
+        new PluginPrompt {
             Name = "Username",
             Description = "Enter your username",
             PromptType = PluginPromptType.Text,
             Required = true,
             SortOrder = 0,
         },
-        new PluginPrompt
-        {
+        new PluginPrompt {
             Name = "Password",
             Description = "Enter your password",
             PromptType = PluginPromptType.Password,

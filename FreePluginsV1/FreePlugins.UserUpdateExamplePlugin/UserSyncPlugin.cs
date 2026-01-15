@@ -22,7 +22,7 @@ namespace FreePlugins.UserUpdateExamplePlugin;
 /// - Merge user data from multiple sources
 /// </summary>
 [Plugin(
-    Id = "0c5770a0-0dbe-4141-ab16-450bfee850ec", // New GUID (original was 0c5770a0-0dbe-4141-ab16-450bfee850eb)
+    Id = "0c5770a0-0dbe-4141-ab16-450bfee850ec",
     Name = "User Sync Example (Compiled)",
     Type = PluginTypes.UserUpdate,
     Version = "1.0.0",
@@ -41,11 +41,10 @@ public class UserSyncPlugin : ICompiledUserUpdatePlugin
     /// <summary>
     /// Plugin properties for compatibility with the existing plugin system.
     /// </summary>
-    public Dictionary<string, object> Properties() => new()
-    {
+    public Dictionary<string, object> Properties() => new() {
         { "Id", Guid.Parse("0c5770a0-0dbe-4141-ab16-450bfee850ec") },
         { "Author", "WSU EIT" },
-        { "ContainsSensitiveData", true }, // User data is sensitive
+        { "ContainsSensitiveData", true },
         { "Description", "Synchronizes user information from external systems." },
         { "Name", "User Sync Example (Compiled)" },
         { "Type", PluginTypes.UserUpdate },
@@ -66,6 +65,7 @@ public class UserSyncPlugin : ICompiledUserUpdatePlugin
     /// 
     /// For this demo, we simply toggle the email case to show the modification pattern.
     /// </remarks>
+    /// <param name="Context">The user plugin context.</param>
     public async Task<PluginResult> UpdateUserAsync(IPluginUserContext context)
     {
         await Task.CompletedTask;
@@ -78,8 +78,8 @@ public class UserSyncPlugin : ICompiledUserUpdatePlugin
         // Get the user from context
         var user = context.User;
 
-        if (user == null)
-        {
+        // Make sure a user was provided
+        if (user == null) {
             messages.Add("No user provided to update");
             context.LogWarning("UpdateUserAsync called with null user");
             return PluginResult.Failure(messages);
@@ -90,7 +90,7 @@ public class UserSyncPlugin : ICompiledUserUpdatePlugin
         // 2. Call external system to get updated data
         // 3. Map external data to user properties
 
-        // For demo purposes, we'll document the expected behavior
+        // For demo purposes, we document the expected behavior
         messages.Add($"User update plugin executed: {plugin.Name}");
         messages.Add($"Plugin version: {plugin.Version}");
         messages.Add("User object received for processing");
@@ -104,8 +104,8 @@ public class UserSyncPlugin : ICompiledUserUpdatePlugin
 
         context.LogInfo("User update plugin completed successfully");
 
-        // Return success with the user object
-        // In real usage, return the modified user as an object
+        // Return success with the user object.
+        // In real usage, return the modified user as an object.
         return PluginResult.Success(messages, [user]);
     }
 
@@ -127,25 +127,25 @@ public class UserSyncPlugin : ICompiledUserUpdatePlugin
         {
             var user = context.User as UserModel;
             if (user == null) return PluginResult.Failure(["No user provided"]);
-            
-            // Connect to LDAP
+
+            // First, connect to LDAP
             var ldapConnection = await ConnectToLdap();
-            
-            // Look up user
+
+            // Now, look up the user
             var ldapUser = await ldapConnection.FindUserByEmail(user.Email);
             if (ldapUser == null) return PluginResult.Failure([$"User not found in LDAP: {user.Email}"]);
-            
-            // Update properties
+
+            // Next, update the properties
             user.FirstName = ldapUser.GivenName;
             user.LastName = ldapUser.Surname;
             user.Department = ldapUser.Department;
             user.Title = ldapUser.Title;
             user.Phone = ldapUser.TelephoneNumber;
             user.Manager = ldapUser.Manager;
-            
-            // Sync group memberships
+
+            // Finally, sync group memberships
             user.Groups = ldapUser.MemberOf.Select(g => g.Name).ToList();
-            
+
             return PluginResult.Success([$"Updated user: {user.Email}"], [user]);
         }
         */
