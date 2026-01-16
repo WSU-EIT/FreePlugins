@@ -1,0 +1,242 @@
+@* ============================================================================
+   PLUGIN UI RENDERER
+   ============================================================================
+   Part of: FreePlugins.App (custom extension)
+   
+   PURPOSE:
+     Renders UIElement trees from compiled plugins into Blazor UI.
+     Plugins define UI as POCOs (UIElement), this component interprets and renders them.
+   
+   USAGE:
+     <FreePlugins_App_PluginUIRenderer Elements="@plugin.UIElements" OnAction="HandleAction" />
+   
+   SECURITY:
+     - Html type renders raw HTML - ensure content is trusted
+     - Actions are string-based callbacks - validate before execution
+   
+   NO CORE MODIFICATIONS:
+     This is a .App. file - does not modify core FreeCRM infrastructure.
+   ============================================================================ *@
+
+@using FreePlugins.Abstractions
+
+@if (Elements != null && Elements.Any())
+{
+    foreach (var element in Elements)
+    {
+        @RenderElement(element)
+    }
+}
+
+@code {
+    /// <summary>
+    /// The UI elements to render.
+    /// </summary>
+    [Parameter]
+    public List<UIElement>? Elements { get; set; }
+
+    /// <summary>
+    /// Callback when an action button is clicked. Passes the action name.
+    /// </summary>
+    [Parameter]
+    public EventCallback<string> OnAction { get; set; }
+
+    /// <summary>
+    /// Optional CSS class to wrap all elements in.
+    /// </summary>
+    [Parameter]
+    public string? ContainerClass { get; set; }
+
+    private RenderFragment RenderElement(UIElement element) => builder =>
+    {
+        int seq = 0;
+        string css = element.CssClass ?? "";
+
+        switch (element.Type)
+        {
+            case UIElementType.Text:
+                builder.OpenElement(seq++, "p");
+                if (!string.IsNullOrEmpty(css)) builder.AddAttribute(seq++, "class", css);
+                builder.AddContent(seq++, element.Text);
+                builder.CloseElement();
+                break;
+
+            case UIElementType.Heading:
+                var tag = element.Level switch { 1 => "h1", 2 => "h2", 3 => "h3", 4 => "h4", 5 => "h5", 6 => "h6", _ => "h3" };
+                builder.OpenElement(seq++, tag);
+                if (!string.IsNullOrEmpty(css)) builder.AddAttribute(seq++, "class", css);
+                builder.AddContent(seq++, element.Text);
+                builder.CloseElement();
+                break;
+
+            case UIElementType.Button:
+                builder.OpenElement(seq++, "button");
+                builder.AddAttribute(seq++, "type", "button");
+                builder.AddAttribute(seq++, "class", $"btn {css}".Trim());
+                builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => OnAction.InvokeAsync(element.Action)));
+                if (!string.IsNullOrEmpty(element.Icon))
+                {
+                    builder.OpenElement(seq++, "i");
+                    builder.AddAttribute(seq++, "class", $"{element.Icon} me-1");
+                    builder.CloseElement();
+                }
+                builder.AddContent(seq++, element.Text);
+                builder.CloseElement();
+                break;
+
+            case UIElementType.Card:
+                builder.OpenElement(seq++, "div");
+                builder.AddAttribute(seq++, "class", $"card {css}".Trim());
+                if (!string.IsNullOrEmpty(element.Text))
+                {
+                    builder.OpenElement(seq++, "div");
+                    builder.AddAttribute(seq++, "class", "card-header");
+                    builder.AddContent(seq++, element.Text);
+                    builder.CloseElement();
+                }
+                builder.OpenElement(seq++, "div");
+                builder.AddAttribute(seq++, "class", "card-body");
+                foreach (var child in element.Children ?? []) builder.AddContent(seq++, RenderElement(child));
+                builder.CloseElement();
+                builder.CloseElement();
+                break;
+
+            case UIElementType.Alert:
+                builder.OpenElement(seq++, "div");
+                builder.AddAttribute(seq++, "class", $"alert alert-{element.Variant} {css}".Trim());
+                builder.AddContent(seq++, element.Text);
+                builder.CloseElement();
+                break;
+
+            case UIElementType.Badge:
+                builder.OpenElement(seq++, "span");
+                builder.AddAttribute(seq++, "class", $"badge bg-{element.Variant} {css}".Trim());
+                builder.AddContent(seq++, element.Text);
+                builder.CloseElement();
+                break;
+
+            case UIElementType.Divider:
+                builder.OpenElement(seq++, "hr");
+                if (!string.IsNullOrEmpty(css)) builder.AddAttribute(seq++, "class", css);
+                builder.CloseElement();
+                break;
+
+            case UIElementType.Html:
+                builder.OpenElement(seq++, "div");
+                if (!string.IsNullOrEmpty(css)) builder.AddAttribute(seq++, "class", css);
+                builder.AddMarkupContent(seq++, element.Html);
+                builder.CloseElement();
+                break;
+
+            case UIElementType.Link:
+                builder.OpenElement(seq++, "a");
+                builder.AddAttribute(seq++, "href", element.Url);
+                if (!string.IsNullOrEmpty(css)) builder.AddAttribute(seq++, "class", css);
+                if (!string.IsNullOrEmpty(element.Icon))
+                {
+                    builder.OpenElement(seq++, "i");
+                    builder.AddAttribute(seq++, "class", $"{element.Icon} me-1");
+                    builder.CloseElement();
+                }
+                builder.AddContent(seq++, element.Text);
+                builder.CloseElement();
+                break;
+
+            case UIElementType.Image:
+                builder.OpenElement(seq++, "img");
+                builder.AddAttribute(seq++, "src", element.Url);
+                builder.AddAttribute(seq++, "alt", element.Alt);
+                if (!string.IsNullOrEmpty(css)) builder.AddAttribute(seq++, "class", css);
+                builder.CloseElement();
+                break;
+
+            case UIElementType.UnorderedList:
+            case UIElementType.OrderedList:
+                builder.OpenElement(seq++, element.Type == UIElementType.OrderedList ? "ol" : "ul");
+                if (!string.IsNullOrEmpty(css)) builder.AddAttribute(seq++, "class", css);
+                foreach (var child in element.Children ?? [])
+                {
+                    builder.OpenElement(seq++, "li");
+                    builder.AddContent(seq++, child.Text);
+                    builder.CloseElement();
+                }
+                builder.CloseElement();
+                break;
+
+            case UIElementType.Table:
+                builder.OpenElement(seq++, "div");
+                builder.AddAttribute(seq++, "class", "table-responsive");
+                builder.OpenElement(seq++, "table");
+                builder.AddAttribute(seq++, "class", $"table table-sm {css}".Trim());
+                if (element.Headers?.Any() == true)
+                {
+                    builder.OpenElement(seq++, "thead");
+                    builder.AddAttribute(seq++, "class", "table-dark");
+                    builder.OpenElement(seq++, "tr");
+                    foreach (var h in element.Headers) { builder.OpenElement(seq++, "th"); builder.AddContent(seq++, h); builder.CloseElement(); }
+                    builder.CloseElement();
+                    builder.CloseElement();
+                }
+                if (element.Rows?.Any() == true)
+                {
+                    builder.OpenElement(seq++, "tbody");
+                    foreach (var row in element.Rows)
+                    {
+                        builder.OpenElement(seq++, "tr");
+                        foreach (var cell in row) { builder.OpenElement(seq++, "td"); builder.AddContent(seq++, cell); builder.CloseElement(); }
+                        builder.CloseElement();
+                    }
+                    builder.CloseElement();
+                }
+                builder.CloseElement();
+                builder.CloseElement();
+                break;
+
+            case UIElementType.Row:
+                builder.OpenElement(seq++, "div");
+                builder.AddAttribute(seq++, "class", $"row {css}".Trim());
+                foreach (var child in element.Children ?? []) builder.AddContent(seq++, RenderElement(child));
+                builder.CloseElement();
+                break;
+
+            case UIElementType.Column:
+                builder.OpenElement(seq++, "div");
+                builder.AddAttribute(seq++, "class", string.IsNullOrEmpty(css) ? "col" : css);
+                foreach (var child in element.Children ?? []) builder.AddContent(seq++, RenderElement(child));
+                builder.CloseElement();
+                break;
+
+            case UIElementType.Progress:
+                builder.OpenElement(seq++, "div");
+                builder.AddAttribute(seq++, "class", $"progress {css}".Trim());
+                builder.OpenElement(seq++, "div");
+                builder.AddAttribute(seq++, "class", $"progress-bar bg-{element.Variant}");
+                int max = element.Attributes.TryGetValue("max", out var m) && int.TryParse(m, out var pm) ? pm : 100;
+                builder.AddAttribute(seq++, "style", $"width: {(max > 0 ? element.Level * 100 / max : 0)}%");
+                builder.CloseElement();
+                builder.CloseElement();
+                break;
+
+            case UIElementType.Icon:
+                builder.OpenElement(seq++, "i");
+                builder.AddAttribute(seq++, "class", $"{element.Icon} {css}".Trim());
+                builder.CloseElement();
+                break;
+
+            case UIElementType.Code:
+                builder.OpenElement(seq++, "pre");
+                if (!string.IsNullOrEmpty(css)) builder.AddAttribute(seq++, "class", css);
+                builder.OpenElement(seq++, "code");
+                builder.AddContent(seq++, element.Text);
+                builder.CloseElement();
+                builder.CloseElement();
+                break;
+
+            case UIElementType.Spacer:
+                builder.OpenElement(seq++, "div");
+                builder.AddAttribute(seq++, "class", $"mb-{element.Level}");
+                builder.CloseElement();
+                break;
+        }
+    };
+}

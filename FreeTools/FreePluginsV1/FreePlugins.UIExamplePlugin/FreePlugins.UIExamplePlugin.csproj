@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <RootNamespace>FreePlugins.UIExamplePlugin</RootNamespace>
+    <AssemblyName>FreePlugins.UIExamplePlugin</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FreePlugins.Abstractions\FreePlugins.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>

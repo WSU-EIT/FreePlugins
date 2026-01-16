@@ -112,6 +112,8 @@ namespace FreePlugins
             builder.Services.AddPluginsFromAssembly(typeof(FreePlugins.UserUpdateExamplePlugin.UserSyncPlugin).Assembly);
             builder.Services.AddPluginsFromAssembly(typeof(FreePlugins.TenantRestrictedPlugin.TenantSpecificPlugin).Assembly);
             builder.Services.AddPluginsFromAssembly(typeof(FreePlugins.DataAccessExamplePlugin.ContextInfoPlugin).Assembly);
+            // TODO: Register UIExamplePlugin once file is properly created
+            // builder.Services.AddPluginsFromAssembly(typeof(FreePlugins.UIExamplePlugin.UIExamplePlugin).Assembly);
 
             // Register the compiled plugin executor
             builder.Services.AddTransient<CompiledPluginExecutor>();

@@ -22,6 +22,7 @@
     <ProjectReference Include="..\FreePlugins.UserUpdateExamplePlugin\FreePlugins.UserUpdateExamplePlugin.csproj" />
     <ProjectReference Include="..\FreePlugins.TenantRestrictedPlugin\FreePlugins.TenantRestrictedPlugin.csproj" />
     <ProjectReference Include="..\FreePlugins.DataAccessExamplePlugin\FreePlugins.DataAccessExamplePlugin.csproj" />
+    <ProjectReference Include="..\FreePlugins.UIExamplePlugin\FreePlugins.UIExamplePlugin.csproj" />
     <PackageReference Include="AspNet.Security.OAuth.Apple" Version="10.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="10.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="10.0.1" />
